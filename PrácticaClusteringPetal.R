@@ -1,6 +1,9 @@
 
+clarans <- function(x, k, l, m){
+  init(x, k, l, m)
+}
 
-calcularDistribucion <- function(){
+calcularDistribucion <- function(x, k){
   # Calcula el centro más cercano de cada instancia
   
   # Guarda la distancia de una instancia al centro
@@ -127,6 +130,256 @@ calcularDistribucion <- function(){
 
 
 
+
+# Crea un array con los datos reales a partir de los índices de lso mismos guardados en cada cluster
+crearMatrizConDatos <- function(clusterACopiar){
+  # En esta nueva matriz vamos a copiar los datos del cluster 1 para plotearlos
+  plotCluster = matrix(nrow = length(clusterACopiar), ncol = 2)
+  for(i in 1:length(clusterACopiar)){
+    plotCluster[i, 1] = petalMatrix[clusterACopiar[i], 1]
+    plotCluster[i, 2] = petalMatrix[clusterACopiar[i], 2]
+  }
+  return(plotCluster)
+}
+
+
+
+
+init <- function(x, k, l, m){
+  ll <- 0
+  mm <- 0 # Contador de las iteraciones NO mejoradas
+  while(ll < l){
+    while(mm < m){
+      print("l")
+      print(ll)
+      print("m")
+      print(mm)
+      
+      # Primera iteración
+      z <- calcularDistribucion(x, k)
+      
+      # Selecciona el cluster para hacer el cambio
+      # Comprueba que no selecciona un cluster sin datos
+      clusterVacio <- FALSE
+      repeat{
+        clusterParaHacerCambio <- sample(1:5, 1)
+        switch(clusterParaHacerCambio, 
+               {
+                 if(!(is.null(cluster1))){
+                  break;
+                 }
+               }, 
+               {
+                 if(!(is.null(cluster2))){
+                  break;
+                 }
+               },
+               {
+                 if(!(is.null(cluster3))){
+                  break;
+                 }
+               },
+               {
+                 if(!(is.null(cluster4))){
+                  break;
+                 }
+               },
+               {
+                 if(!(is.null(cluster5))){
+                  break;
+                 }
+               },
+               {
+                 print("Cluster no exists!")
+               }
+        )
+      }
+      
+      switch(clusterParaHacerCambio, 
+             {
+               # Selecciona una instancia de su cluster
+               indice <- sample(length(cluster1), 1)
+               instanciaParaHacerCambio1 <- cluster1[indice]
+               # Guarda una copia de seguridad del centro del cluster 1
+               antiguoCentroCluster1 <- centros[1, ]
+               #print(centros)
+               # Actualiza los centros
+               centros[1, 1] <- petalMatrix[instanciaParaHacerCambio1, 1]
+               centros[1, 2] <- petalMatrix[instanciaParaHacerCambio1, 2]
+               # Recalcula la distribucion
+               calcularDistribucion()
+               # Si mejoramos el error absoluto, reemplazamos los centros
+               if(errorAbsolutoTotal < z){
+                 print("Error 1111111 mejorado!")
+                 #print(centros)
+                 mm <- 0
+               }
+               # Si no mejoramos el error absoluto, volvemos hacia atrás
+               else{
+                 print("Error 1111111 NO Mejorado!")
+                 centros[1, 1] <- antiguoCentroCluster1[1]
+                 centros[1, 2] <- antiguoCentroCluster1[2]
+                 mm = mm + 1
+               }
+             }, 
+             {
+               # Selecciona una instancia de su cluster
+               indice <- sample(length(cluster2), 1)
+               instanciaParaHacerCambio2 <- cluster2[indice]
+               # Guarda una copia de seguridad del centro del cluster 2
+               antiguoCentroCluster2 <- centros[2, ]
+               #print(centros)
+               # Actualiza los centros
+               centros[2, 1] <- petalMatrix[instanciaParaHacerCambio2, 1]
+               centros[2, 2] <- petalMatrix[instanciaParaHacerCambio2, 2]
+               # Recalcula la distribucion
+               calcularDistribucion()
+               # Si mejoramos el error absoluto, reemplazamos los centros
+               if(errorAbsolutoTotal < z){
+                 print("Error 2222222 mejorado!")
+                 #print(centros)
+                 mm <- 0
+               }
+               # Si no mejoramos el error absoluto, volvemos hacia atrás
+               else{
+                 print("Error 2222222 NO Mejorado!")
+                 centros[2, 1] <- antiguoCentroCluster2[1]
+                 centros[2, 2] <- antiguoCentroCluster2[2]
+                 mm = mm + 1
+               }
+             },
+             {
+               # Selecciona una instancia de su cluster
+               indice <- sample(length(cluster3), 1)
+               instanciaParaHacerCambio3 <- cluster3[indice]
+               # Guarda una copia de seguridad del centro del cluster 1
+               antiguoCentroCluster3 <- centros[3, ]
+               #print(centros)
+               # Actualiza los centros
+               centros[3, 1] <- petalMatrix[instanciaParaHacerCambio3, 1]
+               centros[3, 2] <- petalMatrix[instanciaParaHacerCambio3, 2]
+               # Recalcula la distribucion
+               calcularDistribucion()
+               # Si mejoramos el error absoluto, reemplazamos los centros
+               if(errorAbsolutoTotal < z){
+                 print("Error 3333333 mejorado!")
+                 #print(centros)
+                 mm <- 0
+               }
+               # Si no mejoramos el error absoluto, volvemos hacia atrás
+               else{
+                 print("Error 3333333 NO Mejorado!")
+                 centros[3, 1] <- antiguoCentroCluster3[1]
+                 centros[3, 2] <- antiguoCentroCluster3[2]
+                 mm = mm + 1
+               }
+             },
+             {
+               # Selecciona una instancia de su cluster
+               indice <- sample(length(cluster4), 1)
+               instanciaParaHacerCambio4 <- cluster4[indice]
+               # Guarda una copia de seguridad del centro del cluster 1
+               antiguoCentroCluster4 <- centros[4, ]
+               #print(centros)
+               # Actualiza los centros
+               centros[4, 1] <- petalMatrix[instanciaParaHacerCambio4, 1]
+               centros[4, 2] <- petalMatrix[instanciaParaHacerCambio4, 2]
+               # Recalcula la distribucion
+               calcularDistribucion()
+               # Si mejoramos el error absoluto, reemplazamos los centros
+               if(errorAbsolutoTotal < z){
+                 print("Error 4444444 mejorado!")
+                 #print(centros)
+                 mm <- 0
+               }
+               # Si no mejoramos el error absoluto, volvemos hacia atrás
+               else{
+                 print("Error 4444444 NO Mejorado!")
+                 centros[4, 1] <- antiguoCentroCluster4[1]
+                 centros[4, 2] <- antiguoCentroCluster4[2]
+                 mm = mm + 1
+               }
+             },
+             {
+               # Selecciona una instancia de su cluster
+               indice <- sample(length(cluster5), 1)
+               instanciaParaHacerCambio5 <- cluster5[indice]
+               # Guarda una copia de seguridad del centro del cluster 1
+               antiguoCentroCluster5 <- centros[5, ]
+               #print(centros)
+               # Actualiza los centros
+               centros[5, 1] <- petalMatrix[instanciaParaHacerCambio5, 1]
+               centros[5, 2] <- petalMatrix[instanciaParaHacerCambio5, 2]
+               # Recalcula la distribucion
+               calcularDistribucion()
+               # Si mejoramos el error absoluto, reemplazamos los centros
+               if(errorAbsolutoTotal < z){
+                 print("Error 5555555 mejorado!")
+                 #print(centros)
+                 mm <- 0
+               }
+               # Si no mejoramos el error absoluto, volvemos hacia atrás
+               else{
+                 print("Error 5555555 NO Mejorado!")
+                 centros[5, 1] <- antiguoCentroCluster5[1]
+                 centros[5, 2] <- antiguoCentroCluster5[2]
+                 mm = mm + 1
+               }
+             },
+             {
+               print("Tiri!")
+               print("Cluster no exists!")
+             }
+      )
+    }
+    # Actualizamos el contador de iteraciones
+    ll <- ll + 1
+  }
+  
+  condicion <- TRUE
+  numero <- 3
+  repeat{
+    print("Introduce un numero")
+    if(numero > 3){
+      print("Numero NO valido. Intentalo de nuevo")
+      condicion <- TRUE
+    }
+    if(numero <= 3){
+      print("Numero Valido")
+      break;
+    }
+  }
+  
+  plotCluster1 <- crearMatrizConDatos(cluster1)
+  plot(plotCluster1)
+  
+  plotCluster2 <- crearMatrizConDatos(cluster2)
+  plot(plotCluster2)
+  
+  plotCluster3 <- crearMatrizConDatos(cluster3)
+  plot(plotCluster3)
+  
+  plotCluster4 <- crearMatrizConDatos(cluster4)
+  plot(plotCluster4)
+  
+  plotCluster5 <- crearMatrizConDatos(cluster5)
+  plot(plotCluster5)
+  
+  # Escribe los datos de los clusters reales a un CSV
+  write.csv(plotCluster1, file = "clusterPetal1.csv")
+  write.csv(plotCluster2, file = "cluster2Petal.csv")
+  write.csv(plotCluster3, file = "cluster3Petal.csv")
+  write.csv(plotCluster4, file = "cluster4Petal.csv")
+  write.csv(plotCluster5, file = "cluster5Petal.csv")
+}
+
+
+
+
+
+
+
+
 # Dividimos el dataset iris en por el sépalo y el pétalo de la flor
 sepalMatrix <- iris
 petalMatrix <- iris
@@ -154,242 +407,4 @@ for(i in 1:k){
   }
 }
 
-
-
-
-l <- 0
-m <- 0 # Contador de las iteraciones NO mejoradas
-while(l < 5){
-  while(m < 5){
-    print("l")
-    print(l)
-    print("m")
-    print(m)
-    
-    # Primera iteración
-    z <- calcularDistribucion()
-    
-    # Selecciona el cluster para hacer el cambio
-    # Comprueba que no selecciona un cluster sin datos
-    clusterVacio <- FALSE
-    repeat{
-      clusterParaHacerCambio <- sample(1:5, 1)
-      switch(clusterParaHacerCambio, 
-             {
-               if(!(is.null(cluster1))){
-                break;
-               }
-             }, 
-             {
-               if(!(is.null(cluster2))){
-                break;
-               }
-             },
-             {
-               if(!(is.null(cluster3))){
-                break;
-               }
-             },
-             {
-               if(!(is.null(cluster4))){
-                break;
-               }
-             },
-             {
-               if(!(is.null(cluster5))){
-                break;
-               }
-             },
-             {
-               print("Cluster no exists!")
-             }
-      )
-    }
-    
-    switch(clusterParaHacerCambio, 
-           {
-             # Selecciona una instancia de su cluster
-             indice <- sample(length(cluster1), 1)
-             instanciaParaHacerCambio1 <- cluster1[indice]
-             # Guarda una copia de seguridad del centro del cluster 1
-             antiguoCentroCluster1 <- centros[1, ]
-             #print(centros)
-             # Actualiza los centros
-             centros[1, 1] <- petalMatrix[instanciaParaHacerCambio1, 1]
-             centros[1, 2] <- petalMatrix[instanciaParaHacerCambio1, 2]
-             # Recalcula la distribucion
-             calcularDistribucion()
-             # Si mejoramos el error absoluto, reemplazamos los centros
-             if(errorAbsolutoTotal < z){
-               print("Error 1111111 mejorado!")
-               #print(centros)
-               m <- 0
-             }
-             # Si no mejoramos el error absoluto, volvemos hacia atrás
-             else{
-               print("Error 1111111 NO Mejorado!")
-               centros[1, 1] <- antiguoCentroCluster1[1]
-               centros[1, 2] <- antiguoCentroCluster1[2]
-               m = m + 1
-             }
-           }, 
-           {
-             # Selecciona una instancia de su cluster
-             indice <- sample(length(cluster2), 1)
-             instanciaParaHacerCambio2 <- cluster2[indice]
-             # Guarda una copia de seguridad del centro del cluster 2
-             antiguoCentroCluster2 <- centros[2, ]
-             #print(centros)
-             # Actualiza los centros
-             centros[2, 1] <- petalMatrix[instanciaParaHacerCambio2, 1]
-             centros[2, 2] <- petalMatrix[instanciaParaHacerCambio2, 2]
-             # Recalcula la distribucion
-             calcularDistribucion()
-             # Si mejoramos el error absoluto, reemplazamos los centros
-             if(errorAbsolutoTotal < z){
-               print("Error 2222222 mejorado!")
-               #print(centros)
-               m <- 0
-             }
-             # Si no mejoramos el error absoluto, volvemos hacia atrás
-             else{
-               print("Error 2222222 NO Mejorado!")
-               centros[2, 1] <- antiguoCentroCluster2[1]
-               centros[2, 2] <- antiguoCentroCluster2[2]
-               m = m + 1
-             }
-           },
-           {
-             # Selecciona una instancia de su cluster
-             indice <- sample(length(cluster3), 1)
-             instanciaParaHacerCambio3 <- cluster3[indice]
-             # Guarda una copia de seguridad del centro del cluster 1
-             antiguoCentroCluster3 <- centros[3, ]
-             #print(centros)
-             # Actualiza los centros
-             centros[3, 1] <- petalMatrix[instanciaParaHacerCambio3, 1]
-             centros[3, 2] <- petalMatrix[instanciaParaHacerCambio3, 2]
-             # Recalcula la distribucion
-             calcularDistribucion()
-             # Si mejoramos el error absoluto, reemplazamos los centros
-             if(errorAbsolutoTotal < z){
-               print("Error 3333333 mejorado!")
-               #print(centros)
-               m <- 0
-             }
-             # Si no mejoramos el error absoluto, volvemos hacia atrás
-             else{
-               print("Error 3333333 NO Mejorado!")
-               centros[3, 1] <- antiguoCentroCluster3[1]
-               centros[3, 2] <- antiguoCentroCluster3[2]
-               m = m + 1
-             }
-           },
-           {
-             # Selecciona una instancia de su cluster
-             indice <- sample(length(cluster4), 1)
-             instanciaParaHacerCambio4 <- cluster4[indice]
-             # Guarda una copia de seguridad del centro del cluster 1
-             antiguoCentroCluster4 <- centros[4, ]
-             #print(centros)
-             # Actualiza los centros
-             centros[4, 1] <- petalMatrix[instanciaParaHacerCambio4, 1]
-             centros[4, 2] <- petalMatrix[instanciaParaHacerCambio4, 2]
-             # Recalcula la distribucion
-             calcularDistribucion()
-             # Si mejoramos el error absoluto, reemplazamos los centros
-             if(errorAbsolutoTotal < z){
-               print("Error 4444444 mejorado!")
-               #print(centros)
-               m <- 0
-             }
-             # Si no mejoramos el error absoluto, volvemos hacia atrás
-             else{
-               print("Error 4444444 NO Mejorado!")
-               centros[4, 1] <- antiguoCentroCluster4[1]
-               centros[4, 2] <- antiguoCentroCluster4[2]
-               m = m + 1
-             }
-           },
-           {
-             # Selecciona una instancia de su cluster
-             indice <- sample(length(cluster5), 1)
-             instanciaParaHacerCambio5 <- cluster5[indice]
-             # Guarda una copia de seguridad del centro del cluster 1
-             antiguoCentroCluster5 <- centros[5, ]
-             #print(centros)
-             # Actualiza los centros
-             centros[5, 1] <- petalMatrix[instanciaParaHacerCambio5, 1]
-             centros[5, 2] <- petalMatrix[instanciaParaHacerCambio5, 2]
-             # Recalcula la distribucion
-             calcularDistribucion()
-             # Si mejoramos el error absoluto, reemplazamos los centros
-             if(errorAbsolutoTotal < z){
-               print("Error 5555555 mejorado!")
-               #print(centros)
-               m <- 0
-             }
-             # Si no mejoramos el error absoluto, volvemos hacia atrás
-             else{
-               print("Error 5555555 NO Mejorado!")
-               centros[5, 1] <- antiguoCentroCluster5[1]
-               centros[5, 2] <- antiguoCentroCluster5[2]
-               m = m + 1
-             }
-           },
-           {
-             print("Tiri!")
-             print("Cluster no exists!")
-           }
-    )
-  }
-  # Actualizamos el contador de iteraciones
-  l <- l + 1
-}
-
-condicion <- TRUE
-numero <- 3
-repeat{
-  print("Introduce un numero")
-  if(numero > 3){
-    print("Numero NO valido. Intentalo de nuevo")
-    condicion <- TRUE
-  }
-  if(numero <= 3){
-    print("Numero Valido")
-    break;
-  }
-}
-
-# Crea un array con los datos reales a partir de los índices de lso mismos guardados en cada cluster
-crearMatrizConDatos <- function(clusterACopiar){
-  # En esta nueva matriz vamos a copiar los datos del cluster 1 para plotearlos
-  plotCluster = matrix(nrow = length(clusterACopiar), ncol = 2)
-  for(i in 1:length(clusterACopiar)){
-    plotCluster[i, 1] = petalMatrix[clusterACopiar[i], 1]
-    plotCluster[i, 2] = petalMatrix[clusterACopiar[i], 2]
-  }
-  return(plotCluster)
-}
-
-plotCluster1 <- crearMatrizConDatos(cluster1)
-plot(plotCluster1)
-
-plotCluster2 <- crearMatrizConDatos(cluster2)
-plot(plotCluster2)
-
-plotCluster3 <- crearMatrizConDatos(cluster3)
-plot(plotCluster3)
-
-plotCluster4 <- crearMatrizConDatos(cluster4)
-plot(plotCluster4)
-
-plotCluster5 <- crearMatrizConDatos(cluster5)
-plot(plotCluster5)
-
-# Escribe los datos de los clusters reales a un CSV
-write.csv(plotCluster1, file = "clusterPetal1.csv")
-write.csv(plotCluster2, file = "cluster2Petal.csv")
-write.csv(plotCluster3, file = "cluster3Petal.csv")
-write.csv(plotCluster4, file = "cluster4Petal.csv")
-write.csv(plotCluster5, file = "cluster5Petal.csv")
+clarans(petalMatrix, 5, 10 ,5)
