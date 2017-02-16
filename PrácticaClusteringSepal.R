@@ -1,14 +1,13 @@
 
-
+# Calcula el centro más cercano de cada instancia
 calcularDistribucion <- function(){
-  # Calcula el centro más cercano de cada instancia
   
   # Guarda la distancia de una instancia al centro
   distanciaACentro <- c(0,0);
   # Guarda la distancia desde cada centro a cada una de las instancias
-  distanciasTotales = matrix(nrow = 5, ncol = 150)
+  distanciasTotales = matrix(nrow = k, ncol = 150)
   
-  for(centro in 1:5){
+  for(centro in 1:k){
     for(instancia in 1:150){
       distanciaACentro[1] <- sepalMatrix[instancia, 1] - centros[centro, 1]
       distanciaACentro[2] <- sepalMatrix[instancia, 2] - centros[centro, 2]
@@ -18,111 +17,37 @@ calcularDistribucion <- function(){
     }
   }
   
-  # Reserva de los clusters (variables globales)
-  cluster1 <<- c();
-  cluster2 <<- c();
-  cluster3 <<- c();
-  cluster4 <<- c();
-  cluster5 <<- c();
   
   # Guarda cada instancia (SU ÍNDICE, no sus datos) en su cluster más cercano
   for(instancia in 1:150){
     indiceCluster <- which.min(distanciasTotales[ , instancia])
-    switch(indiceCluster, 
-           {cluster1 <<- c(cluster1, instancia)}, 
-           {cluster2 <<- c(cluster2, instancia)},
-           {cluster3 <<- c(cluster3, instancia)},
-           {cluster4 <<- c(cluster4, instancia)},
-           {cluster5 <<- c(cluster5, instancia)},
-           {print("Cluster no exists!")}
-    )
+    sepalMatrix$clusterIndex[instancia] <- indiceCluster
   }
   
-  
+  erroresAbsolutos <- c(0, 0, 0) # El error absoluto para cada cluster
+  distanciaACentro <- c(0, 0)
   # Calcula el error absoluto de cada cluster
-  # Calcula el error absoluto del cluster 1
-  errorAbsolutoCluster1 <- NULL
-  if(length(cluster1) != 0){
-    errorAbsolutoCluster1 <- 0
-    for(instancia in 1:length(cluster1)){
-      distanciaACentro[1] <- sepalMatrix[cluster1[instancia], 1] - centros[1 , 1]
-      distanciaACentro[2] <- sepalMatrix[cluster1[instancia], 2] - centros[1 , 2]
-      moduloDistancia <- sqrt((distanciaACentro[1]^2)+(distanciaACentro[2]^2))
-      
-      errorAbsolutoCluster1 <- errorAbsolutoCluster1 + (moduloDistancia ^ 2)
+  for(cluster in 1:k){
+    # Si hay algo en el cluster, operamos
+    erroresAbsolutos[k] <- 0
+    for(instancia in 1:150){
+      if(sepalMatrix$clusterIndex[instancia] == k){
+        distanciaACentro[1] <- sepalMatrix[instancia, 1] - centros[cluster , 1]
+        distanciaACentro[2] <- sepalMatrix[instancia, 2] - centros[cluster , 2]
+        moduloDistancia <- sqrt((distanciaACentro[1]^2)+(distanciaACentro[2]^2))
+        
+        erroresAbsolutos[cluster] <- erroresAbsolutos[cluster] + (moduloDistancia ^ 2)
+      }
     }
   }
   
-  # Calcula el error absoluto del cluster 2
-  errorAbsolutoCluster2 <- NULL
-  if(length(cluster2) != 0){
-    errorAbsolutoCluster2 <- 0
-    for(instancia in 1:length(cluster2)){
-      distanciaACentro[1] <- sepalMatrix[cluster2[instancia], 1] - centros[1 , 1]
-      distanciaACentro[2] <- sepalMatrix[cluster2[instancia], 2] - centros[1 , 2]
-      moduloDistancia <- sqrt((distanciaACentro[1]^2)+(distanciaACentro[2]^2))
-      
-      errorAbsolutoCluster2 <- errorAbsolutoCluster2 + (moduloDistancia ^ 2)
-    }
+  errorAbsolutoTotal <- 0
+  for(cluster in 1:k){
+    errorAbsolutoTotal <- errorAbsolutoTotal + erroresAbsolutos[cluster]
   }
   
-  # Calcula el error absoluto del cluster 3
-  errorAbsolutoCluster3 <- NULL
-  if(length(cluster3) != 0){
-    for(instancia in 1:length(cluster3)){
-      errorAbsolutoCluster3 <- 0
-      distanciaACentro[1] <- sepalMatrix[cluster3[instancia], 1] - centros[1 , 1]
-      distanciaACentro[2] <- sepalMatrix[cluster3[instancia], 2] - centros[1 , 2]
-      moduloDistancia <- sqrt((distanciaACentro[1]^2)+(distanciaACentro[2]^2))
-      
-      errorAbsolutoCluster3 <- errorAbsolutoCluster3 + (moduloDistancia ^ 2)
-    }
-  }
-  
-  # Calcula el error absoluto del cluster 4
-  errorAbsolutoCluster4 <- NULL
-  if(length(cluster4) != 0){
-    errorAbsolutoCluster4 <- 0
-    for(instancia in 1:length(cluster4)){
-      distanciaACentro[1] <- sepalMatrix[cluster4[instancia], 1] - centros[1 , 1]
-      distanciaACentro[2] <- sepalMatrix[cluster4[instancia], 2] - centros[1 , 2]
-      moduloDistancia <- sqrt((distanciaACentro[1]^2)+(distanciaACentro[2]^2))
-      
-      errorAbsolutoCluster4 <- errorAbsolutoCluster4 + (moduloDistancia ^ 2)
-    }
-  }
-  
-  # Calcula el error absoluto del cluster 5
-  errorAbsolutoCluster5 <- NULL
-  if(length(cluster5) != 0){
-    errorAbsolutoCluster5 <- 0
-    for(instancia in 1:length(cluster5)){
-      distanciaACentro[1] <- sepalMatrix[cluster5[instancia], 1] - centros[1 , 1]
-      distanciaACentro[2] <- sepalMatrix[cluster5[instancia], 2] - centros[1 , 2]
-      moduloDistancia <- sqrt((distanciaACentro[1]^2)+(distanciaACentro[2]^2))
-      
-      errorAbsolutoCluster5 <- errorAbsolutoCluster5 + (moduloDistancia ^ 2)
-    }
-  }
-  
-  # PARCHE CUTRE: si algún error absoluto es NULL, le damos valor cero para poder sumar el resto
-  if(is.null(errorAbsolutoCluster1)){
-    errorAbsolutoCluster1 <- 0
-  }
-  if(is.null(errorAbsolutoCluster2)){
-    errorAbsolutoCluster2 <- 0
-  }
-  if(is.null(errorAbsolutoCluster3)){
-    errorAbsolutoCluster3 <- 0
-  }
-  if(is.null(errorAbsolutoCluster4)){
-    errorAbsolutoCluster4 <- 0
-  }
-  if(is.null(errorAbsolutoCluster5)){
-    errorAbsolutoCluster5 <- 0
-  }
-  
-  errorAbsolutoTotal <<- errorAbsolutoCluster1 + errorAbsolutoCluster2 + errorAbsolutoCluster3 + errorAbsolutoCluster4 + errorAbsolutoCluster5
+  listaADevolver <- list("errorAbsolutoTotal" = errorAbsolutoTotal, "sepalMatrix" = sepalMatrix)
+  return(listaADevolver)
 } # Fin función calcularDistribucion()
 
 
@@ -136,9 +61,12 @@ petalMatrix$Sepal.Length <- NULL
 petalMatrix$Sepal.Width <- NULL
 sepalMatrix$Species <- NULL
 petalMatrix$Species <- NULL
+# Añadimos una columna el petal que guarda el cluster al que pertenece
+petalMatrix["clusterIndex"] <- 0
+sepalMatrix["clusterIndex"] <- 0
 
 # Elige un número de instancias aleatorias (guarda el índice de la fila)
-k = 5
+k = 3
 indicesAleatorios = c();
 for(i in 1: k){
   indicesAleatorios <- c(indicesAleatorios, sample(1:150, 1))
@@ -154,9 +82,6 @@ for(i in 1:k){
   }
 }
 
-
-
-
 l <- 0
 m <- 0 # Contador de las iteraciones NO mejoradas
 while(l < 5){
@@ -167,229 +92,90 @@ while(l < 5){
     print(m)
     
     # Primera iteración
-    z <- calcularDistribucion()
+    listaRecibida <- calcularDistribucion()
     
     # Selecciona el cluster para hacer el cambio
-    # Comprueba que no selecciona un cluster sin datos
-    clusterVacio <- FALSE
-    repeat{
-      clusterParaHacerCambio <- sample(1:5, 1)
-      switch(clusterParaHacerCambio, 
-             {
-               if(!(is.null(cluster1))){
-                 break;
-               }
-             }, 
-             {
-               if(!(is.null(cluster2))){
-                 break;
-               }
-             },
-             {
-               if(!(is.null(cluster3))){
-                 break;
-               }
-             },
-             {
-               if(!(is.null(cluster4))){
-                 break;
-               }
-             },
-             {
-               if(!(is.null(cluster5))){
-                 break;
-               }
-             },
-             {
-               print("Cluster no exists!")
-             }
-      )
+    clusterParaHacerCambio <- sample(1:3, 1)
+    
+    # Selecciona una instancia de su cluster (coge los índices)
+    instancias <- c()
+    indice <- sample(3, 1)
+    for(i in 1:150){
+      if(listaRecibida$sepalMatrix$clusterIndex[i] == indice){
+        instancias <- c(instancias, i)
+      }
     }
     
-    switch(clusterParaHacerCambio, 
-           {
-             # Selecciona una instancia de su cluster
-             indice <- sample(length(cluster1), 1)
-             instanciaParaHacerCambio1 <- cluster1[indice]
-             # Guarda una copia de seguridad del centro del cluster 1
-             antiguoCentroCluster1 <- centros[1, ]
-             #print(centros)
-             # Actualiza los centros
-             centros[1, 1] <- sepalMatrix[instanciaParaHacerCambio1, 1]
-             centros[1, 2] <- sepalMatrix[instanciaParaHacerCambio1, 2]
-             # Recalcula la distribucion
-             calcularDistribucion()
-             # Si mejoramos el error absoluto, reemplazamos los centros
-             if(errorAbsolutoTotal < z){
-               print("Error 1111111 mejorado!")
-               #print(centros)
-               m <- 0
-             }
-             # Si no mejoramos el error absoluto, volvemos hacia atrás
-             else{
-               print("Error 1111111 NO Mejorado!")
-               centros[1, 1] <- antiguoCentroCluster1[1]
-               centros[1, 2] <- antiguoCentroCluster1[2]
-               m = m + 1
-             }
-           }, 
-           {
-             # Selecciona una instancia de su cluster
-             indice <- sample(length(cluster2), 1)
-             instanciaParaHacerCambio2 <- cluster2[indice]
-             # Guarda una copia de seguridad del centro del cluster 2
-             antiguoCentroCluster2 <- centros[2, ]
-             #print(centros)
-             # Actualiza los centros
-             centros[2, 1] <- sepalMatrix[instanciaParaHacerCambio2, 1]
-             centros[2, 2] <- sepalMatrix[instanciaParaHacerCambio2, 2]
-             # Recalcula la distribucion
-             calcularDistribucion()
-             # Si mejoramos el error absoluto, reemplazamos los centros
-             if(errorAbsolutoTotal < z){
-               print("Error 2222222 mejorado!")
-               #print(centros)
-               m <- 0
-             }
-             # Si no mejoramos el error absoluto, volvemos hacia atrás
-             else{
-               print("Error 2222222 NO Mejorado!")
-               centros[2, 1] <- antiguoCentroCluster2[1]
-               centros[2, 2] <- antiguoCentroCluster2[2]
-               m = m + 1
-             }
-           },
-           {
-             # Selecciona una instancia de su cluster
-             indice <- sample(length(cluster3), 1)
-             instanciaParaHacerCambio3 <- cluster3[indice]
-             # Guarda una copia de seguridad del centro del cluster 1
-             antiguoCentroCluster3 <- centros[3, ]
-             #print(centros)
-             # Actualiza los centros
-             centros[3, 1] <- sepalMatrix[instanciaParaHacerCambio3, 1]
-             centros[3, 2] <- sepalMatrix[instanciaParaHacerCambio3, 2]
-             # Recalcula la distribucion
-             calcularDistribucion()
-             # Si mejoramos el error absoluto, reemplazamos los centros
-             if(errorAbsolutoTotal < z){
-               print("Error 3333333 mejorado!")
-               #print(centros)
-               m <- 0
-             }
-             # Si no mejoramos el error absoluto, volvemos hacia atrás
-             else{
-               print("Error 3333333 NO Mejorado!")
-               centros[3, 1] <- antiguoCentroCluster3[1]
-               centros[3, 2] <- antiguoCentroCluster3[2]
-               m = m + 1
-             }
-           },
-           {
-             # Selecciona una instancia de su cluster
-             indice <- sample(length(cluster4), 1)
-             instanciaParaHacerCambio4 <- cluster4[indice]
-             # Guarda una copia de seguridad del centro del cluster 1
-             antiguoCentroCluster4 <- centros[4, ]
-             #print(centros)
-             # Actualiza los centros
-             centros[4, 1] <- sepalMatrix[instanciaParaHacerCambio4, 1]
-             centros[4, 2] <- sepalMatrix[instanciaParaHacerCambio4, 2]
-             # Recalcula la distribucion
-             calcularDistribucion()
-             # Si mejoramos el error absoluto, reemplazamos los centros
-             if(errorAbsolutoTotal < z){
-               print("Error 4444444 mejorado!")
-               #print(centros)
-               m <- 0
-             }
-             # Si no mejoramos el error absoluto, volvemos hacia atrás
-             else{
-               print("Error 4444444 NO Mejorado!")
-               centros[4, 1] <- antiguoCentroCluster4[1]
-               centros[4, 2] <- antiguoCentroCluster4[2]
-               m = m + 1
-             }
-           },
-           {
-             # Selecciona una instancia de su cluster
-             indice <- sample(length(cluster5), 1)
-             instanciaParaHacerCambio5 <- cluster5[indice]
-             # Guarda una copia de seguridad del centro del cluster 1
-             antiguoCentroCluster5 <- centros[5, ]
-             #print(centros)
-             # Actualiza los centros
-             centros[5, 1] <- sepalMatrix[instanciaParaHacerCambio5, 1]
-             centros[5, 2] <- sepalMatrix[instanciaParaHacerCambio5, 2]
-             # Recalcula la distribucion
-             calcularDistribucion()
-             # Si mejoramos el error absoluto, reemplazamos los centros
-             if(errorAbsolutoTotal < z){
-               print("Error 5555555 mejorado!")
-               #print(centros)
-               m <- 0
-             }
-             # Si no mejoramos el error absoluto, volvemos hacia atrás
-             else{
-               print("Error 5555555 NO Mejorado!")
-               centros[5, 1] <- antiguoCentroCluster5[1]
-               centros[5, 2] <- antiguoCentroCluster5[2]
-               m = m + 1
-             }
-           },
-           {
-             print("Tiri!")
-             print("Cluster no exists!")
-           }
-    )
-  }
-  # Actualizamos el contador de iteraciones
-  l <- l + 1
-}
-
-condicion <- TRUE
-numero <- 3
-repeat{
-  print("Introduce un numero")
-  if(numero > 3){
-    print("Numero NO valido. Intentalo de nuevo")
-    condicion <- TRUE
-  }
-  if(numero <= 3){
-    print("Numero Valido")
-    break;
+    if(length(instancias) == 0){
+      print("No hay elementos en el cluster")
+      print(indice)
+    }else{
+    
+    # Coge los datos
+    instanciaParaHacerCambio <- listaRecibida$sepalMatrix[sample(length(instancias), 1), ]
+    
+    # Guarda una copia de seguridad del centro del cluster
+    antiguoCentroCluster <- centros[indice, ]
+    # Actualiza los centros
+    centros[indice, 1] <- instanciaParaHacerCambio[, 1]
+    centros[indice, 2] <- instanciaParaHacerCambio[, 2]
+    # Recalcula la distribucion
+    listaRecibidaNueva <- calcularDistribucion()
+    # Si mejoramos el error absoluto, reemplazamos los centros
+    if(listaRecibidaNueva$errorAbsolutoTotal < listaRecibida$errorAbsolutoTotal){
+      print("Error 1111111 mejorado!")
+      #print(centros)
+      m <- 0
+    }
+    # Si no mejoramos el error absoluto, volvemos hacia atrás
+    else{
+      print("Error 1111111 NO Mejorado!")
+      centros[indice, 1] <- antiguoCentroCluster[1]
+      centros[indice, 2] <- antiguoCentroCluster[2]
+      m = m + 1
+    }
+   }
+   # Actualizamos el contador de iteraciones
+   l <- l + 1
   }
 }
 
-# Crea un array con los datos reales a partir de los índices de lso mismos guardados en cada cluster
-crearMatrizConDatos <- function(clusterACopiar){
+crearMatrizConDatos <- function(instanciasRecibidas){
   # En esta nueva matriz vamos a copiar los datos del cluster 1 para plotearlos
-  plotCluster = matrix(nrow = length(clusterACopiar), ncol = 2)
-  for(i in 1:length(clusterACopiar)){
-    plotCluster[i, 1] = sepalMatrix[clusterACopiar[i], 1]
-    plotCluster[i, 2] = sepalMatrix[clusterACopiar[i], 2]
+  plotCluster = matrix(nrow = length(instanciasRecibidas), ncol = 2)
+  for(i in 1:length(instanciasRecibidas)){
+    plotCluster[i, 1] = listaRecibidaNueva$sepalMatrix[i, 1]
+    plotCluster[i, 2] = listaRecibidaNueva$sepalMatrix[i, 2]
   }
   return(plotCluster)
 }
 
-plotCluster1 <- crearMatrizConDatos(cluster1)
-plot(plotCluster1)
+# Crea un array con los datos reales a partir de los índices de lso mismos guardados en cada cluster
+instancias <- c()
+for(i in 1:k){
+  print(i)
+  for(j in 1:150){
+    if(listaRecibida$sepalMatrix$clusterIndex[j] == i){
+      instancias <- c(instancias, j)
+    }
+  }
+  if(length(instancias) == 0){
+    print("Cluster vacio. No se puede mostrar")
+  }
+  plotCluster <- crearMatrizConDatos(instancias)
+  plot(plotCluster)
+  Sys.sleep(2)
+}
 
-plotCluster2 <- crearMatrizConDatos(cluster2)
-plot(plotCluster2)
-
-plotCluster3 <- crearMatrizConDatos(cluster3)
-plot(plotCluster3)
-
-plotCluster4 <- crearMatrizConDatos(cluster4)
-plot(plotCluster4)
-
-plotCluster5 <- crearMatrizConDatos(cluster5)
-plot(plotCluster5)
-
-# Escribe los datos de los clusters reales a un CSV
-write.csv(plotCluster1, file = "clusterSepal1.csv")
-write.csv(plotCluster2, file = "clusterSepal2.csv")
-write.csv(plotCluster3, file = "clusterSepal3.csv")
-write.csv(plotCluster4, file = "clusterSepal4.csv")
-write.csv(plotCluster5, file = "clusterSepal5.csv")
+# 
+# plotCluster2 <- crearMatrizConDatos(cluster2)
+# plot(plotCluster2)
+# 
+# plotCluster3 <- crearMatrizConDatos(cluster3)
+# plot(plotCluster3)
+# 
+# 
+# # Escribe los datos de los clusters reales a un CSV
+# write.csv(plotCluster1, file = "clusterSepal1.csv")
+# write.csv(plotCluster2, file = "clusterSepal2.csv")
+# write.csv(plotCluster3, file = "clusterSepal3.csv")
