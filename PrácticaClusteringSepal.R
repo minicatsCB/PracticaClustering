@@ -1,6 +1,6 @@
 
 # Calcula el centro más cercano de cada instancia
-calcularDistribucion <- function(){
+calcularDistribucion <- function(sepalMatrix, k, metrix, stand, l, m, centros){
   
   # Guarda la distancia de una instancia al centro
   distanciaACentro <- c(0,0);
@@ -51,6 +51,96 @@ calcularDistribucion <- function(){
 } # Fin función calcularDistribucion()
 
 
+init <- function(sepalMatrix, k, metrix, stand, l, m){
+  # Elige un número de instancias aleatorias (guarda el índice de la fila)
+  print("En init")
+  k <- 3
+  indicesAleatorios <- c();
+  for(i in 1: k){
+    indicesAleatorios <- c(indicesAleatorios, sample(1:150, 1))
+  }
+  
+  # Esta matriz contiene las instancias que van a ser los centros de los clusters
+  centros = matrix(nrow = k, ncol = 2)
+  
+  # Guarda las instancias cuyos índices han sido elegidos
+  for(i in 1:k){
+    for(j in 1:2){
+      centros[i, j] <- sepalMatrix[indicesAleatorios[i], j]
+    }
+  }
+  
+  l <- 0
+  m <- 0 # Contador de las iteraciones NO mejoradas
+  while(l < 5){
+    while(m < 5){
+      print("l")
+      print(l)
+      print("m")
+      print(m)
+      
+      # Primera iteración
+      listaRecibida <- calcularDistribucion(sepalMatrix, 3, "euclidean", false, 5, 5, centros)
+      
+      # Selecciona el cluster para hacer el cambio
+      clusterParaHacerCambio <- sample(1:3, 1)
+      
+      # Selecciona una instancia de su cluster (coge los índices)
+      instancias <- c()
+      indice <- sample(3, 1)
+      for(i in 1:150){
+        if(listaRecibida$sepalMatrix$clusterIndex[i] == indice){
+          instancias <- c(instancias, i)
+        }
+      }
+      
+      if(length(instancias) == 0){
+        print("No hay elementos en el cluster")
+        print(indice)
+      }else{
+      
+      # Coge los datos
+      instanciaParaHacerCambio <- listaRecibida$sepalMatrix[sample(length(instancias), 1), ]
+      
+      # Guarda una copia de seguridad del centro del cluster
+      antiguoCentroCluster <- centros[indice, ]
+      # Actualiza los centros
+      centros[indice, 1] <- instanciaParaHacerCambio[, 1]
+      centros[indice, 2] <- instanciaParaHacerCambio[, 2]
+      # Recalcula la distribucion
+      listaRecibidaNueva <- calcularDistribucion(sepalMatrix, 3, "euclidean", false, 5, 5, centros)
+      # Si mejoramos el error absoluto, reemplazamos los centros
+      if(listaRecibidaNueva$errorAbsolutoTotal < listaRecibida$errorAbsolutoTotal){
+        print("Error 1111111 mejorado!")
+        #print(centros)
+        m <- 0
+      }
+      # Si no mejoramos el error absoluto, volvemos hacia atrás
+      else{
+        print("Error 1111111 NO Mejorado!")
+        centros[indice, 1] <- antiguoCentroCluster[1]
+        centros[indice, 2] <- antiguoCentroCluster[2]
+        m = m + 1
+      }
+     }
+     # Actualizamos el contador de iteraciones
+     l <- l + 1
+    }
+  }
+  
+  return(listaRecibidaNueva)
+}
+
+crearMatrizConDatos <- function(instanciasRecibidas, listaRecibidaNueva){
+  # En esta nueva matriz vamos a copiar los datos del cluster 1 para plotearlos
+  plotCluster = matrix(nrow = length(instanciasRecibidas), ncol = 2)
+  for(i in 1:length(instanciasRecibidas)){
+    plotCluster[i, 1] = listaRecibidaNueva$sepalMatrix[i, 1]
+    plotCluster[i, 2] = listaRecibidaNueva$sepalMatrix[i, 2]
+  }
+  return(plotCluster)
+}
+
 
 # Dividimos el dataset iris en por el sépalo y el pétalo de la flor
 sepalMatrix <- iris
@@ -65,92 +155,10 @@ petalMatrix$Species <- NULL
 petalMatrix["clusterIndex"] <- 0
 sepalMatrix["clusterIndex"] <- 0
 
-# Elige un número de instancias aleatorias (guarda el índice de la fila)
-k = 3
-indicesAleatorios = c();
-for(i in 1: k){
-  indicesAleatorios <- c(indicesAleatorios, sample(1:150, 1))
-}
-
-# Esta matriz contiene las instancias que van a ser los centros de los clusters
-centros = matrix(nrow = k, ncol = 2)
-
-# Guarda las instancias cuyos índices han sido elegidos
-for(i in 1:k){
-  for(j in 1:2){
-    centros[i, j] <- sepalMatrix[indicesAleatorios[i], j]
-  }
-}
-
-l <- 0
-m <- 0 # Contador de las iteraciones NO mejoradas
-while(l < 5){
-  while(m < 5){
-    print("l")
-    print(l)
-    print("m")
-    print(m)
-    
-    # Primera iteración
-    listaRecibida <- calcularDistribucion()
-    
-    # Selecciona el cluster para hacer el cambio
-    clusterParaHacerCambio <- sample(1:3, 1)
-    
-    # Selecciona una instancia de su cluster (coge los índices)
-    instancias <- c()
-    indice <- sample(3, 1)
-    for(i in 1:150){
-      if(listaRecibida$sepalMatrix$clusterIndex[i] == indice){
-        instancias <- c(instancias, i)
-      }
-    }
-    
-    if(length(instancias) == 0){
-      print("No hay elementos en el cluster")
-      print(indice)
-    }else{
-    
-    # Coge los datos
-    instanciaParaHacerCambio <- listaRecibida$sepalMatrix[sample(length(instancias), 1), ]
-    
-    # Guarda una copia de seguridad del centro del cluster
-    antiguoCentroCluster <- centros[indice, ]
-    # Actualiza los centros
-    centros[indice, 1] <- instanciaParaHacerCambio[, 1]
-    centros[indice, 2] <- instanciaParaHacerCambio[, 2]
-    # Recalcula la distribucion
-    listaRecibidaNueva <- calcularDistribucion()
-    # Si mejoramos el error absoluto, reemplazamos los centros
-    if(listaRecibidaNueva$errorAbsolutoTotal < listaRecibida$errorAbsolutoTotal){
-      print("Error 1111111 mejorado!")
-      #print(centros)
-      m <- 0
-    }
-    # Si no mejoramos el error absoluto, volvemos hacia atrás
-    else{
-      print("Error 1111111 NO Mejorado!")
-      centros[indice, 1] <- antiguoCentroCluster[1]
-      centros[indice, 2] <- antiguoCentroCluster[2]
-      m = m + 1
-    }
-   }
-   # Actualizamos el contador de iteraciones
-   l <- l + 1
-  }
-}
-
-crearMatrizConDatos <- function(instanciasRecibidas){
-  # En esta nueva matriz vamos a copiar los datos del cluster 1 para plotearlos
-  plotCluster = matrix(nrow = length(instanciasRecibidas), ncol = 2)
-  for(i in 1:length(instanciasRecibidas)){
-    plotCluster[i, 1] = listaRecibidaNueva$sepalMatrix[i, 1]
-    plotCluster[i, 2] = listaRecibidaNueva$sepalMatrix[i, 2]
-  }
-  return(plotCluster)
-}
+listaRecibida <- init(sepalMatrix, 3, "euclidean", false, 5, 5)
 
 # Crea un array con los datos reales a partir de los índices de lso mismos guardados en cada cluster
+k <- 3
 instancias <- c()
 for(i in 1:k){
   print(i)
@@ -162,7 +170,7 @@ for(i in 1:k){
   if(length(instancias) == 0){
     print("Cluster vacio. No se puede mostrar")
   }
-  plotCluster <- crearMatrizConDatos(instancias)
+  plotCluster <- crearMatrizConDatos(instancias, listaRecibida)
   plot(plotCluster)
   Sys.sleep(2)
 }
