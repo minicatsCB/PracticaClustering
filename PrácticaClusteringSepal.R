@@ -46,7 +46,7 @@ calcularDistribucion <- function(sepalMatrix, k, metrix, stand, l, m, centros){
     errorAbsolutoTotal <- errorAbsolutoTotal + erroresAbsolutos[cluster]
   }
   
-  listaADevolver <- list("errorAbsolutoTotal" = errorAbsolutoTotal, "sepalMatrix" = sepalMatrix)
+  listaADevolver <- list("errorAbsolutoTotal" = errorAbsolutoTotal, "sepalMatrix" = sepalMatrix, "centros" = centros)
   return(listaADevolver)
 } # Fin función calcularDistribucion()
 
