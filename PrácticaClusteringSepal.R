@@ -51,7 +51,7 @@ calcularDistribucion <- function(sepalMatrix, k, metrix, stand, l, m, centros){
 } # Fin función calcularDistribucion()
 
 
-init <- function(flowerMatrix, k, metrix, stand, l, m){
+init <- function(sepalMatrix, k, metrix, stand, l, m){
   # Elige un número de instancias aleatorias (guarda el índice de la fila)
   print("En init")
   k <- 3
@@ -66,7 +66,7 @@ init <- function(flowerMatrix, k, metrix, stand, l, m){
   # Guarda las instancias cuyos índices han sido elegidos
   for(i in 1:k){
     for(j in 1:2){
-      centros[i, j] <- flowerMatrix[indicesAleatorios[i], j]
+      centros[i, j] <- sepalMatrix[indicesAleatorios[i], j]
     }
   }
   
@@ -80,7 +80,7 @@ init <- function(flowerMatrix, k, metrix, stand, l, m){
       print(m)
       
       # Primera iteración
-      listaRecibida <- calcularDistribucion(flowerMatrix, 3, "euclidean", false, 5, 5, centros)
+      listaRecibida <- calcularDistribucion(sepalMatrix, 3, "euclidean", false, 5, 5, centros)
       
       # Selecciona el cluster para hacer el cambio
       clusterParaHacerCambio <- sample(1:3, 1)
@@ -89,7 +89,7 @@ init <- function(flowerMatrix, k, metrix, stand, l, m){
       instancias <- c()
       indice <- sample(3, 1)
       for(i in 1:150){
-        if(listaRecibida$flowerMatrix$clusterIndex[i] == indice){
+        if(listaRecibida$sepalMatrix$clusterIndex[i] == indice){
           instancias <- c(instancias, i)
         }
       }
@@ -100,7 +100,7 @@ init <- function(flowerMatrix, k, metrix, stand, l, m){
       }else{
       
       # Coge los datos
-      instanciaParaHacerCambio <- listaRecibida$flowerMatrix[sample(length(instancias), 1), ]
+      instanciaParaHacerCambio <- listaRecibida$sepalMatrix[sample(length(instancias), 1), ]
       
       # Guarda una copia de seguridad del centro del cluster
       antiguoCentroCluster <- centros[indice, ]
@@ -108,7 +108,7 @@ init <- function(flowerMatrix, k, metrix, stand, l, m){
       centros[indice, 1] <- instanciaParaHacerCambio[, 1]
       centros[indice, 2] <- instanciaParaHacerCambio[, 2]
       # Recalcula la distribucion
-      listaRecibidaNueva <- calcularDistribucion(flowerMatrix, 3, "euclidean", false, 5, 5, centros)
+      listaRecibidaNueva <- calcularDistribucion(sepalMatrix, 3, "euclidean", false, 5, 5, centros)
       # Si mejoramos el error absoluto, reemplazamos los centros
       if(listaRecibidaNueva$errorAbsolutoTotal < listaRecibida$errorAbsolutoTotal){
         print("Error 1111111 mejorado!")
