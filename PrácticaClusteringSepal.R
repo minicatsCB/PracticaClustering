@@ -147,10 +147,9 @@ sepalMatrix["clusterIndex"] <- 0
 
 listaRecibida <- init(petalMatrix, 3, "euclidean", false, 5, 5)
 
-print(listaRecibida$sepalMatrix)
+#print(listaRecibida$sepalMatrix)
 
 centrosFinales <- as.data.frame(listaRecibida$centros)
-#sepalMatrixToPlot <- as.factor(listaRecibida$sepalMatrix)
 
-#ggplot(listaRecibida$sepalMatrix, aes(color = qsec))
-
+plot(listaRecibida$sepalMatrix$Petal.Length, listaRecibida$sepalMatrix$Petal.Width, pch=17, col = ifelse(listaRecibida$sepalMatrix$clusterIndex == 1, "red", ifelse(listaRecibida$sepalMatrix$clusterIndex == 2, "blue", "black")))
+points(centrosFinales$V1, centrosFinales$V2, pch = 16, col = "green")
