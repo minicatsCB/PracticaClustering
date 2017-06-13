@@ -110,22 +110,28 @@ clarans <- function(x, k, metric = "euclidean", stand = FALSE, l = 5, m = 10){
       }
       
       # Si no funciona, quitarlo (pero los valores salen muy diferentes)
-      if((is.na(finalClusters) && is.na(finalBestAbsoluteError) && is.na(finalMedians)) || !is.na(finalBestAbsoluteError) && originalAbsError < finalBestAbsoluteError) {
-        finalClusters = mediansWithDistances$Medians
-        finalMedians = medians
-        finalBestAbsoluteError = originalAbsError
-      }
+      #if((is.na(finalClusters) && is.na(finalBestAbsoluteError) && is.na(finalMedians)) || !is.na(finalBestAbsoluteError) && originalAbsError < finalBestAbsoluteError) {
+      #  finalClusters = mediansWithDistances$Median
+      #  finalMedians = medians
+      #  finalBestAbsoluteError = originalAbsError
+      #}
       
       l <- l - 1
     }
     
-    return(list(clusters = finalClusters, medoids = finalMedians, absoluteError = finalBestAbsoluteError))
+    return(list(clusters =  mediansWithDistances$Median, medoids = medians, finalBestAbsoluteError = originalAbsError))
   }
 }
 
-cluster <- clarans(x <- iris[1:2], k, distance, FALSE, l, m)
+cluster <- clarans(x <- iris[3:4], k, distance, FALSE, l, m)
 
 cluster$clusters <- as.factor(cluster$clusters) # Convert to int
 cluster$medoids <- as.data.frame(cluster$medoids)
 
-ggplot(iris, aes(Sepal.Length, Sepal.Width, color = cluster$clusters)) + geom_point()
+colors <- paste(row.names(cluster$medoids), " - Centroid", sep="")
+ggplot(iris, aes(Petal.Length, Petal.Width, color = cluster$clusters)) +
+  geom_point() +
+  ggtitle("CLARANS Petal") +
+  geom_point(shape = 15, size = 2, data = cluster$medoids, mapping = aes(Petal.Length, Petal.Width, color = factor(colors))) +
+  coord_fixed(ratio = 1) +
+  theme(plot.title = element_text(hjust = 0.5))
