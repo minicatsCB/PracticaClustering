@@ -60,10 +60,6 @@ clarans <- function(x, k, metric = "euclidean", stand = FALSE, l = 5, m = 10){
   # Le ponemos nombres a las columnas del dataframe
   colnames(tempMedoidsWithDistances) <- c("Medoid","DistanceToMedoid")
   
-  #finalClusters = NA
-  #finalMedoids = NA;
-  #finalBestAbsoluteError = NA;
-  
   #1. Repetir l veces
   while(l > 0){
     #1.1 Selecciona k instancias al azar como medianas
@@ -116,13 +112,6 @@ clarans <- function(x, k, metric = "euclidean", stand = FALSE, l = 5, m = 10){
       if(iterations >= m){
         break
       }
-      
-      # Si no funciona, quitarlo (pero los valores salen muy diferentes)
-      #if((is.na(finalClusters) && is.na(finalBestAbsoluteError) && is.na(finalMedoids)) || !is.na(finalBestAbsoluteError) && originalAbsError < finalBestAbsoluteError) {
-      #  finalClusters = medoidsWithDistances$Medoid
-      #  finalMedoids = medoids
-      #  finalBestAbsoluteError = originalAbsError
-      #}
       
       l <- l - 1
     }
