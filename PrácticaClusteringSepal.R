@@ -16,6 +16,9 @@ calcularDistribucion <- function(sepalMatrix, k, metrix, stand, l, m, centros){
       distanciasTotales[centro, instancia] <- moduloDistancia
     }
   }
+ 
+  #x <- dist(rbind(sepalMatrix[1:2], centros))
+  print(sepalMatrix[1:2])
   
   
   # Guarda cada instancia (SU ÍNDICE, no sus datos) en su cluster más cercano
@@ -62,11 +65,12 @@ init <- function(sepalMatrix, k, metrix, stand, l, m){
   
   # Esta matriz contiene las instancias que van a ser los centros de los clusters
   centros = matrix(nrow = k, ncol = 2)
+  print(centros)
   
   # Guarda las instancias cuyos índices han sido elegidos
   for(i in 1:k){
     for(j in 1:2){
-      centros[i, j] <- sepalMatrix[indicesAleatorios[i], j]
+      centros[i, j] <- petalMatrix[indicesAleatorios[i], j]
     }
   }
   
@@ -145,11 +149,11 @@ petalMatrix$Species <- NULL
 petalMatrix["clusterIndex"] <- 0
 sepalMatrix["clusterIndex"] <- 0
 
-listaRecibida <- init(petalMatrix, 3, "euclidean", false, 5, 5)
+listaRecibida <- init(sepalMatrix, 3, "euclidean", false, 5, 5)
 
 #print(listaRecibida$sepalMatrix)
 
 centrosFinales <- as.data.frame(listaRecibida$centros)
 
-plot(listaRecibida$sepalMatrix$Petal.Length, listaRecibida$sepalMatrix$Petal.Width, pch=17, col = ifelse(listaRecibida$sepalMatrix$clusterIndex == 1, "red", ifelse(listaRecibida$sepalMatrix$clusterIndex == 2, "blue", "black")))
+plot(listaRecibida$sepalMatrix$Sepal.Length, listaRecibida$sepalMatrix$Sepal.Width, pch=17, col = ifelse(listaRecibida$sepalMatrix$clusterIndex == 1, "red", ifelse(listaRecibida$sepalMatrix$clusterIndex == 2, "blue", "black")))
 points(centrosFinales$V1, centrosFinales$V2, pch = 16, col = "green")
