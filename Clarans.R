@@ -1,8 +1,3 @@
-distance = "euclidean"
-k = 3
-l = 5
-m = 10
-
 # Funciones para calcular la distancia euclídea o manhattan
 euc.dist <- function(x1, x2) sqrt(sum((x1 - x2) ^ 2))
 manhattan.dist <- function(x1, x2) abs(x1[,1] - x2[,1]) + abs(x1[,2] - x2[,2])
@@ -45,7 +40,13 @@ calculateMedoidsAndDistances <- function(dataset, medoids, metric){
   return (result)
 }
 
-clarans <- function(x, k, metric = "euclidean", stand = FALSE, l = 5, m = 10){
+
+
+# metric = Tipo de distancia, Euclídea o Manhattan
+# k = Número de clústers
+# l = Número máximo de iteraciones en general de CLARANS
+# m = Número máximo de iteraciones de PAM dentro de CLARANS
+clarans <- function(x, k, metric = "euclidean", stand = FALSE, l = 5, m = 12){
   # Initializations
   # Aquí guardamos la distancia de cada mediana a cada una de las instancias
   # Es un dataframe para manejarlo mejor
@@ -81,8 +82,10 @@ clarans <- function(x, k, metric = "euclidean", stand = FALSE, l = 5, m = 10){
       
       # 2.3 Si la nueva instancia mejora el criterio de error absoluto, se reemplaza la mediana
       # El error absoluto es la suma de las distancias al cuadrado de cada instancia a su mediana[medoidIndex, ]
-      tempMedoids <- medoids[-medoidIndex, ]  # Con el índice negativo estamos eliminando lo que hay en esa posición
-      tempMedoids[medoidIndex, ] <- instance[]  # En la posición que acabamos de eliminar insertamos la nueva instancia
+      tempMedoids <- medoids
+      tempMedoids <- tempMedoids[-medoidIndex, ]  # Con el índice negativo estamos eliminando lo que hay en esa posición
+      #tempMedoids[medoidIndex, ] <- instance[]  # En la posición que acabamos de eliminar insertamos la nueva instancia
+      tempMedoids <- rbind(tempMedoids, instance)
       
       # Ahora que hemos "swapeado" temporalmente la mediana y la instancia,
       # calculamos las distancias temporales del cada una de las instancias
@@ -100,7 +103,7 @@ clarans <- function(x, k, metric = "euclidean", stand = FALSE, l = 5, m = 10){
         medoidsWithDistances$DistanceToMedoid = tempMedoidsWithDistances$DistanceToMedoid
         # Esto se podría hacer directamente: medoidsWithDistances = tempMedoidsWithDistances???
         medoids = tempMedoids
-        # Comenzamos de nuevo
+        # En cuanto hay un cambio, comenzamos de nuevo
         iterations = 0
       }
       else{
@@ -108,7 +111,7 @@ clarans <- function(x, k, metric = "euclidean", stand = FALSE, l = 5, m = 10){
         iterations = iterations + 1
       }
       
-      # Mientras haya cambios en las medianas o se alcancen m iteraciones sin cambios
+      # Cuando se alcancen m iteraciones sin cambios
       if(iterations >= m){
         break
       }
