@@ -124,7 +124,11 @@ clarans <- function(x, k, metric = "euclidean", stand = FALSE, l = 5, m = 12){
 }
 
 # CLARANS SEPAL
-cluster <- clarans(x <- iris[1:2], k, distance, FALSE, l, m)
+k = 3
+metric = "euclidean"
+l = 12
+m = 5
+cluster <- clarans(x <- iris[1:2], k, metric, FALSE, l, m)
 cluster$clusters <- as.factor(cluster$clusters) # Convert to int
 cluster$medoids <- as.data.frame(cluster$medoids)
 
@@ -139,7 +143,7 @@ ggplot(iris, aes(Sepal.Length, Sepal.Width, color = cluster$clusters)) +
 print(cluster$finalBestAbsoluteError)
 
 # CLARANS Petal
-cluster <- clarans(x <- iris[3:4], k, distance, FALSE, l, m)
+cluster <- clarans(x <- iris[3:4], k, metric, FALSE, l, m)
 cluster$clusters <- as.factor(cluster$clusters)  # Convert to int
 cluster$medoids <- as.data.frame(cluster$medoids)  # Convert matrix to dataframe
 
